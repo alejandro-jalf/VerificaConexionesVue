@@ -2,7 +2,7 @@
     <div class="card mt-3 container-gen" style=" box-shadow: 2px 2px 2px #e6e6e6;">
         <div class="row no-gutters">
             <div class="col-md-2 text-center p-2" id="container-image">
-                <img :src="success" class="card-img mt-1 img-barcode" alt="" style="max-width: 150px;">
+                <img :src="loadImage(sucursal.success)" class="card-img mt-1 img-barcode" alt="" style="max-width: 150px;">
             </div>
             <div class="col-md-8" id="container-data">
                 <div class="card-body">
@@ -17,7 +17,7 @@
 <script>
 import { namesSucursales } from "../config/index";
 import success from "../assets/success.png";
-import warning from "../assets/warning.jpg";
+import warning from "../assets/warning_red.png";
 
 export default {
     name: "CardView",
