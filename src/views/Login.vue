@@ -4,27 +4,32 @@
             <div class="d-flex justify-content-center">
                 <b-avatar icon="person-circle" variant="secundary" size="9rem"></b-avatar>
             </div>
-            <b-form-input placeholder="Usuario" class="mb-4"></b-form-input>
-            <b-form-input :type="status" placeholder="Contraseña" class="mb-4"></b-form-input>
-            <b-button block variant="primary" class="mb-4" @click="showAlertDialog(['Sesion iniciada','Comenzando', 'success'])">Iniciar sesion</b-button>
+            <b-form-input placeholder="Usuario" class="mb-4" v-model="textUser"></b-form-input>
+            <b-form-input :type="status" placeholder="Contraseña" class="mb-4" v-model="textPassword"></b-form-input>
+            <b-button block variant="primary" class="mb-4" @click="initSesion([textUser,textPassword, $router])">Iniciar sesion</b-button>
             <b-form-checkbox v-model="status" value="text" unchecked-value="password"> Mostrar contraseña</b-form-checkbox>
         </b-card>
     </div>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 
 export default {
     name: "Login",
     data() {
         return {
-            status: "password"
+            status: "password",
+            textUser: "",
+            textPassword: ""
         }
     },
     methods: {
         ...mapMutations([
             'showAlertDialog'
+        ]),
+        ...mapActions([
+            'initSesion'
         ])
     }
 }

@@ -7,22 +7,26 @@
           </div>
         <div class="d-flex justify-content-around">
             <div>
-                <strong>aleflo_1996@outlook.com</strong>
+                <strong>{{ userName }}</strong>
             </div>
-            <b-button variant="info">Salir</b-button>
         </div>
         <b-list-group class="mt-2 mb-5">
             <b-list-group-item v-for="(tab, indice) in tabs"
                 :to="tab.ruta"
-                :active="tab.activo"
+                :active="isFocused(tab)"
                 variant="light"
                 :key="indice"
-                @click="setActive(tab)"
+                :disabled="actived(tab, userAccessTo)"
+                class="d-flex justify-content-between align-items-center"
             >
-                <b-icon :icon="tab.icono"></b-icon>
-                {{tab.titulo}}
+                <div>
+                    <b-icon :icon="tab.icono"></b-icon>
+                    {{tab.titulo}}
+                </div>
+                <b-badge v-if="actived(tab, userAccessTo)" variant="danger" pill>off</b-badge>
             </b-list-group-item>
         </b-list-group>
+        <b-button block variant="info" @click="logout($route)">Cerrar sesion</b-button>
       </div>
     </b-sidebar>
   </div>
@@ -35,12 +39,22 @@ export default {
     name: "NavBarSlider",
     methods: {
         ...mapMutations([
-            'setActive'
-        ])
+            'logout'
+        ]),
+        actived({ name }, access) {
+            const finded = access.find(element => element === name)
+            return (typeof finded === "undefined");
+        },
+        isFocused({ name }) {
+            return (this.$route.name === name);
+        }
     },
     computed: {
         ...mapState([
-            'tabs'
+            'tabs',
+            'userAccessTo',
+            'userName',
+
         ])
     }
 }

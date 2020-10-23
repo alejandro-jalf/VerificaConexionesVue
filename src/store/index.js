@@ -10,15 +10,14 @@ export default new Vuex.Store({
         conexiones: [],
         loading: false,
         tabs: [
-            {titulo: "Inicio", icono: "house-fill", activo: false, ruta: "/"},
-            {titulo: "Existencias", icono: "card-checklist", activo: false, ruta: "/about"},
-            {titulo: "Conexiones", icono: "cloud-fill", activo: false, ruta: "/conexiones"},
-            {titulo: "Login", icono: "people", activo: false, ruta: "/login"}
+            {titulo: "Inicio", icono: "house-fill", ruta: "/", name: "Home"},
+            {titulo: "About", icono: "card-checklist", ruta: "/about", name: "About"},
+            {titulo: "Conexiones", icono: "cloud-fill", ruta: "/conexiones", name: "Conexiones"}
         ],
-        login: false,
-        user: "",
-        privilegios: "",
-        accessTo: ["Login"],
+        login: localStorage.getItem("session") || false,
+        userName: localStorage.getItem("userName") || "",
+        userPrivilegios: localStorage.getItem("userPrivilegios") || "",
+        userAccessTo: JSON.parse(localStorage.getItem("userAccessTo")) || ["Login"],
         alertShow: false,
         alertMessage: "Prueba de alerta",
         alertTitle: "Advertencia",
@@ -32,28 +31,30 @@ export default new Vuex.Store({
         setLoading(state, status) {
             state.loading = status;
         },
-        setActive(state, tab) {
-            state.tabs.forEach(element => {
-                element.activo = false;
-            });
-            tab.activo = true;
-        },
-        setActiveByTitulo(state, title) {
-            const tabFinded = state.tabs.find((tab) => tab.titulo === (title.toLowerCase()));
-            const tab = (typeof tabFinded === "undefined") ? state.tabs[0] : tabFinded;
-            this.setActive(tab);
-        },
         login(state, user) {
-            state.user = user.nameUser;
-            state.privilegios = user.privilegios;
-            state.accessTo = user.accessTo;
+            state.userName = user.nameUser;
+            state.userPrivilegios = user.privilegios;
+            state.userAccessTo = user.accessTo;
             state.login = true;
+
+            localStorage.setItem("userName", user.nameUser);
+            localStorage.setItem("userPrivilegios", user.privilegios);
+            const stringAccess = JSON.stringify(user.accessTo);
+            localStorage.setItem("userAccessTo", stringAccess);
+            localStorage.setItem("session", true);
         },
-        logout(state) {
-            state.user = "";
-            state.privilegios = "";
-            state.accessTo = [];
+        logout(state, router) {
+            state.userName = "";
+            state.userPrivilegios = "";
+            state.userAccessTo = [];
             state.login = false;
+
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userPrivilegios");
+            localStorage.removeItem("userAccessTo");
+            localStorage.removeItem("session");
+            
+            router.push({ name: "Login" });
         },
         showAlertDialog: (state, [ message = null, title = "Advertencia", background = "warning", textColor = "light" ]) => {
             console.log(message , title, background , textColor );
@@ -66,6 +67,14 @@ export default new Vuex.Store({
         },
         hideAlertDialog(state) {
             state.alertShow = false;
+        },
+        tabPermision(state) { //sin utilizar 
+            const tabs = state.tabs.filter((tab) => {
+                const accessFinded = state.userAccessTo.find((access) => access === tab.name);
+                return (typeof accessFinded !== "undefined") ? true : false;
+            });
+            console.log(tabs);
+            return tabs
         }
     },
     actions: {
@@ -81,12 +90,24 @@ export default new Vuex.Store({
                 commit("setLoading", false);
             });
         },
-        initSesion({ commit }, [ user, password ]) {
-            const userFinded = users.find((element) => (
-                element.nameUser === user &&
-                element.password === password
-            ));
-            if (typeof userFinded !== "undefined") commit("login", userFinded);
+        initSesion({ commit }, [ user, password, router ]) {
+            const userFinded = users.find((element) => {
+                console.log(element.nameUser, user, element.password, password);
+                return (element.nameUser === user &&
+                element.password === password);
+            });
+            if (typeof userFinded !== "undefined") {
+                console.log("userFinded ");
+                commit("login", userFinded);
+                router.push({ name: userFinded.accessTo[0] });
+                return
+            }
+            // commit("showAlertDialog", ["Usuario o contraseña incorrecta"])
+        },
+        setActiveByTitulo({ commit, state }, title) {
+            const tabFinded = state.tabs.find((tab) => tab.titulo === (title.toLowerCase()));
+            const tab = (typeof tabFinded === "undefined") ? state.tabs[0] : tabFinded;
+            commit("setActive", tab);
         }
     }
 });

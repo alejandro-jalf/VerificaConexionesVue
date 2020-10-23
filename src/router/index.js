@@ -48,18 +48,28 @@ const router = new VueRouter({
   routes
 });
 
+const isPermitted = (name) => {
+  const finded = store.state.userAccessTo.find(tab => tab === name);
+  return (typeof finded !== "undefined");
+}
+
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (store.state.login) {
-      console.log("login", store.state.login);
-      next();
+      if(isPermitted(to.name)) {
+        next();
+      } else {
+        next({ name: store.state.userAccessTo[0] })
+      }
     } else {
-      console.log("deneit");
       next({ name: "Login" });
     }
   } else {
-    console.log("default");
-    next();
+    if (to.name === "Login" && !store.state.login) {
+      next();
+    } else {
+      next({ name: store.state.userAccessTo[0] });
+    }
   }
 });
 
