@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import { mapState } from "vuex";
 import NavBar from "./components/NavBar";
 import Alert from "./components/Alert";
 
@@ -22,15 +22,6 @@ export default {
     return {
       fail: false,
     }
-  },
-  methods: {
-    ...mapMutations([
-      'setActiveByTitulo'
-    ])
-  },
-  mounted() {
-    // console.log(localStorage);
-    // console.log(this.$route);
   },
   computed: {
     ...mapState([
