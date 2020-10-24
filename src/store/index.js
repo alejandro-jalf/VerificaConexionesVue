@@ -57,7 +57,6 @@ export default new Vuex.Store({
             router.push({ name: "Login" });
         },
         showAlertDialog: (state, [ message = null, title = "Advertencia", background = "warning", textColor = "light" ]) => {
-            console.log(message , title, background , textColor );
             if (message === null) return;
             state.alertShow = true;
             state.alertMessage = message;
@@ -91,18 +90,18 @@ export default new Vuex.Store({
             });
         },
         initSesion({ commit }, [ user, password, router ]) {
+            user = user.trim();
+            password = password.trim();
             const userFinded = users.find((element) => {
-                console.log(element.nameUser, user, element.password, password);
                 return (element.nameUser === user &&
                 element.password === password);
             });
             if (typeof userFinded !== "undefined") {
-                console.log("userFinded ");
                 commit("login", userFinded);
                 router.push({ name: userFinded.accessTo[0] });
                 return
             }
-            // commit("showAlertDialog", ["Usuario o contraseña incorrecta"])
+            commit("showAlertDialog", ["Usuario o contraseña incorrecta"])
         },
         setActiveByTitulo({ commit, state }, title) {
             const tabFinded = state.tabs.find((tab) => tab.titulo === (title.toLowerCase()));

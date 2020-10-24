@@ -17,7 +17,7 @@
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
-      <NavBarSlider />
+      <NavBarSlider :router="$router"/>
     </div>
 </template>
 

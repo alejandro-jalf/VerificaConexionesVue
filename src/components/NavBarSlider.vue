@@ -26,7 +26,7 @@
                 <b-badge v-if="actived(tab, userAccessTo)" variant="danger" pill>off</b-badge>
             </b-list-group-item>
         </b-list-group>
-        <b-button block variant="info" @click="logout($route)">Cerrar sesion</b-button>
+        <b-button block variant="info" @click="logout(router)">Cerrar sesion</b-button>
       </div>
     </b-sidebar>
   </div>
@@ -37,6 +37,9 @@ import { mapMutations, mapState } from "vuex";
 
 export default {
     name: "NavBarSlider",
+    props: {
+        router: Object
+    },
     methods: {
         ...mapMutations([
             'logout'
@@ -54,7 +57,6 @@ export default {
             'tabs',
             'userAccessTo',
             'userName',
-
         ])
     }
 }
