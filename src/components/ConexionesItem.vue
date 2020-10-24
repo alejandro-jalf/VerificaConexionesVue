@@ -8,7 +8,7 @@
 
 <script>
 export default {
-    name: "Conexion",
+    name: "ConexionesItem",
     props: {
         sucursal: Object,
     },
