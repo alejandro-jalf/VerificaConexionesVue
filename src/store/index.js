@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
-import  { urlConexion, users } from "../config";
+import  { urlConexion, apiUrlLogin } from "../config";
 
 Vue.use(Vuex);
 
@@ -89,19 +89,40 @@ export default new Vuex.Store({
                 commit("setLoading", false);
             });
         },
-        initSesion({ commit }, [ user, password, router ]) {
-            user = user.trim();
-            password = password.trim();
-            const userFinded = users.find((element) => {
-                return (element.nameUser === user &&
-                element.password === password);
-            });
-            if (typeof userFinded !== "undefined") {
-                commit("login", userFinded);
-                router.push({ name: userFinded.accessTo[0] });
-                return
+        async initSesion({ commit }, [ user, password, router ]) {
+            try {
+                user = user.trim();
+                commit("setLoading", true);
+                const response = await axios({
+                    method: 'post',
+                    url: apiUrlLogin,
+                    data: { user, password }
+                });
+
+                const result = response.data.data;
+                if (result.success === false) {
+                    commit("showAlertDialog", [result.message]);
+                } else {
+                    const userLogin = {
+                        nameUser: user,
+                        privilegios: result.privilegios,
+                        accessTo: result.accessTo
+                    }
+                    commit("login", userLogin);
+                    router.push({ name: userLogin.accessTo[0] });
+                    commit("setLoading", false);
+                    return
+                }
+                commit("setLoading", false);
+            } catch (error) {
+                console.log(error.response);
+                if (error.response !== undefined) {
+                    commit("showAlertDialog", [error.response.data.message]);
+                } else {
+                    commit("showAlertDialog", ["No hay conexion con el servidor"]);
+                }
+                commit("setLoading", false);
             }
-            commit("showAlertDialog", ["Usuario o contraseña incorrecta"])
         },
         setActiveByTitulo({ commit, state }, title) {
             const tabFinded = state.tabs.find((tab) => tab.titulo === (title.toLowerCase()));
