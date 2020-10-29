@@ -5,6 +5,7 @@ import Home from '../views/Home.vue';
 import Login from "../views/Login.vue";
 import About from "../views/About.vue";
 import Conexiones from "../views/Conexiones.vue";
+import LoadFile from "../views/LoadFile.vue";
 
 import store from '../store';
 
@@ -36,6 +37,14 @@ const routes = [
     path: '/conexiones',
     name: "Conexiones",
     component: Conexiones,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/loadfile",
+    name: "LoadFile",
+    component: LoadFile,
     meta: {
       requiresAuth: true
     }

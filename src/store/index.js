@@ -11,8 +11,9 @@ export default new Vuex.Store({
         loading: false,
         tabs: [
             {titulo: "Inicio", icono: "house-fill", ruta: "/", name: "Home"},
-            {titulo: "About", icono: "card-checklist", ruta: "/about", name: "About"},
-            {titulo: "Conexiones", icono: "cloud-fill", ruta: "/conexiones", name: "Conexiones"}
+            {titulo: "About", icono: "info-circle-fill", ruta: "/about", name: "About"},
+            {titulo: "Conexiones", icono: "cloud-fill", ruta: "/conexiones", name: "Conexiones"},
+            {titulo: "LoadFile", icono: "cloud-upload-fill", ruta: "/loadfile", name: "LoadFile"}
         ],
         login: localStorage.getItem("session") || false,
         userName: localStorage.getItem("userName") || "",
